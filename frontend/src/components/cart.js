@@ -10,10 +10,6 @@ const CartVO = {
                 shipping: null,
                 total_items: 0,
             },
-            cartModal: null,
-            previewModal: null,
-            checkoutModal: null,
-            quantityElements: [],
             error: false,
         }
     },
