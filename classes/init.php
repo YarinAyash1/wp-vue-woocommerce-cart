@@ -35,7 +35,7 @@ class Init
     {
         wp_enqueue_script(
             'vue',
-            VUE_WOOCART_URI . '/frontend/build/vue.global.js',
+            VUE_WOOCART_URI . '/frontend/vue.global.js',
             [],
             time(), // Change this to null for production
             true

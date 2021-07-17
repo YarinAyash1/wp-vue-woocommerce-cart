@@ -5,7 +5,6 @@ const CartMount = Vue.createApp(Cart).mount('#cart')
 const ProductsMount = Vue.createApp(Products).mount('#products')
 
 document.body.addEventListener('click', e => {
-    console.log(e.target.dataset)
     if (e.target && e.target.dataset !== null && typeof e.target.dataset === 'object' && 'productItem' in e.target.dataset) {
         e.preventDefault();
         e.stopPropagation();
