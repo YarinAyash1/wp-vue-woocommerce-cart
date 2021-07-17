@@ -1,4 +1,4 @@
-# Wordpress Vue Woocommerce
+# Wordpress Vue Woocommerce Cart
 
 ## Start development
 ```
