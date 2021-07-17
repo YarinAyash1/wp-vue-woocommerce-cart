@@ -1,4 +1,4 @@
-# Wordpress React Woocommerce
+# Wordpress Vue Woocommerce
 
 ## Start development
 ```
