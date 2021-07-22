@@ -1,8 +1,11 @@
 import axios from 'axios';
+
+const CancelToken = axios.CancelToken;
+let cancel;
 const CartVO = {
     data() {
         return {
-            isLoading: false,
+            isLoading: true,
             maxCartItems: null,
             cart: {
                 items: [],
@@ -57,9 +60,38 @@ const CartVO = {
                 this.cart = response.data
             }
         },
+        async updateToCart(cartItemKey, qty) {
+            //Check if there are any previous pending requests
+
+            try {
+
+                const response = await axios.post('/wp-json/wc/store/cart/update-item', {
+                    key: cartItemKey,
+                    quantity: qty,
+                    cancelToken: new CancelToken(function executor(c) {
+                        // An executor function receives a cancel function as a parameter
+                        cancel = c;
+                    })
+                }, {
+                    headers: {
+                        'X-WC-Store-API-Nonce': storeApi.nonce
+                    }
+                })
+                // cancel the request
+                cancel();
+                if (!response.status === 200) {
+                    this.showError(response.data)
+                    return console.error("product couldn't update.")
+                }
+                if (response.data) {
+                    this.cart = response.data
+                }
+            } catch (error) {
+                console.log(error)
+            }
+        },
         async refreshCart() {
             const response = await axios.get(storeApi.get_cart)
-            console.log(response.data)
             if (!response.status === 200) {
                 return console.error("cart couldn't be fetched");
             }
@@ -69,6 +101,7 @@ const CartVO = {
                 shipping: response.data.shipping_rates,
                 total_items: response.data.items.length,
             };
+            this.isLoading = false;
         },
         showError(errorMessage = '') {
             this.error = errorMessage;

@@ -29,6 +29,9 @@ class Init
 
         remove_action('woocommerce_single_product_summary', 'woocommerce_template_single_add_to_cart', 30);
         add_action('woocommerce_single_product_summary', [$this, 'woocommerce_template_single_add_to_cart']);
+
+        add_filter('woocommerce_locate_template', [$this, 'woocommerce_replace_templates'], 10, 3);
+        add_filter('tinvwl_wc_cart_fragments_refresh', '__return_false');
     }
 
     public function init_scripts()
@@ -55,6 +58,8 @@ class Init
             'get_products' => site_url() . '/wp-json/wc/store/products',
             'pageID' => get_the_ID()
         ));
+
+        wp_dequeue_script('wc-cart-fragments');
     }
 
     public function init_frontend()
@@ -68,5 +73,27 @@ class Init
     public function woocommerce_template_single_add_to_cart()
     {
         echo '<button data-product-item="' . get_the_ID() . '">Add to cart</button>';
+    }
+
+    /**
+     * Filter the cart template path to use cart.php in this plugin instead of the one in WooCommerce.
+     *
+     * @param string $template      Default template file path.
+     * @param string $template_name Template file slug.
+     * @param string $template_path Template file name.
+     *
+     * @return string The new Template file path.
+     */
+    public function woocommerce_replace_templates($template, $template_name, $template_path)
+    {
+
+        if ('cart.php' === basename($template) || 'cart-empty.php' === basename($template)) {
+            $template = VUE_WOOCART_PATH . '/frontend/woocommerce/cart/cart.php';
+        }
+        if ('mini-cart.php' === basename($template)) {
+            $template = VUE_WOOCART_PATH . '/frontend/woocommerce/cart/mini-cart.php';
+        }
+
+        return $template;
     }
 }
